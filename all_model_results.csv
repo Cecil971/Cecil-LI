@@ -1,0 +1,309 @@
+term,estimate,std.error,statistic,p.value,model,effect
+(Intercept),5102.355399,1879.145719,2.715252653,0.0066625,lm_bioabove,NA
+year,-2.172626694,0.935362326,-2.322764808,0.020261941,lm_bioabove,NA
+inside_mpaOutside MPA,7970.697243,3518.173715,2.265578078,0.023552037,lm_bioabove,NA
+bioregionTemperate North Atlantic,-724.7220568,3435.742377,-0.210936088,0.83295224,lm_bioabove,NA
+bioregionTemperate North Pacific,-743.694263,3050.101935,-0.243826036,0.807383123,lm_bioabove,NA
+bioregionTemperate Southern,-32072.14837,3557.485822,-9.015397382,3.51E-19,lm_bioabove,NA
+bioregionTropical Atlantic,1495.033149,6851.071945,0.218218866,0.827274226,lm_bioabove,NA
+bioregionTropical Indo Pacific,-6865.501612,2743.354514,-2.502593659,0.01238434,lm_bioabove,NA
+GenusCymodocea,-639.5834155,31.55690007,-20.26762496,2.00E-85,lm_bioabove,NA
+GenusEnhalus,-582.6500477,32.7877317,-17.77036768,4.41E-67,lm_bioabove,NA
+GenusHalodule,-698.9783187,32.05407292,-21.80622476,1.29E-97,lm_bioabove,NA
+GenusHalophila,-688.8049271,31.65185777,-21.76191148,2.94E-97,lm_bioabove,NA
+GenusPhyllospadix,-188.2518696,42.88438861,-4.389752907,1.18E-05,lm_bioabove,NA
+GenusPosidonia,-458.373127,32.67442538,-14.02849849,2.79E-43,lm_bioabove,NA
+GenusRuppia,-711.9054935,32.70903009,-21.76479986,2.79E-97,lm_bioabove,NA
+GenusSyringodium,-641.6789721,33.30754726,-19.26527244,7.68E-78,lm_bioabove,NA
+GenusThalassia,-606.4381739,31.5589889,-19.21602038,1.78E-77,lm_bioabove,NA
+GenusThalassodendron,-525.3086303,35.68445709,-14.72093659,2.49E-47,lm_bioabove,NA
+GenusZostera,-668.1815437,30.10054318,-22.1983218,7.95E-101,lm_bioabove,NA
+year:inside_mpaOutside MPA,-3.973607436,1.754611677,-2.264664876,0.023608135,lm_bioabove,NA
+year:bioregionTemperate North Atlantic,0.361537584,1.706247924,0.211890417,0.832207694,lm_bioabove,NA
+year:bioregionTemperate North Pacific,0.382512725,1.517934211,0.251995589,0.801062663,lm_bioabove,NA
+year:bioregionTemperate Southern,16.04036978,1.776628453,9.028544914,3.13E-19,lm_bioabove,NA
+year:bioregionTropical Atlantic,-0.730978076,3.401802382,-0.214879642,0.829876548,lm_bioabove,NA
+year:bioregionTropical Indo Pacific,3.400857521,1.365055235,2.491369897,0.01278168,lm_bioabove,NA
+inside_mpaOutside MPA:bioregionTemperate North Atlantic,-17197.03946,4958.425617,-3.468245929,0.000531639,lm_bioabove,NA
+inside_mpaOutside MPA:bioregionTemperate North Pacific,-21362.96576,4780.481346,-4.468789692,8.17E-06,lm_bioabove,NA
+inside_mpaOutside MPA:bioregionTemperate Southern,8419.251685,5305.74468,1.586818099,0.112664898,lm_bioabove,NA
+inside_mpaOutside MPA:bioregionTropical Atlantic,-17964.6651,7571.455417,-2.372683204,0.017725478,lm_bioabove,NA
+inside_mpaOutside MPA:bioregionTropical Indo Pacific,-15190.6419,4347.264409,-3.494299051,0.00048256,lm_bioabove,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Atlantic,8.572749367,2.469012985,3.472136202,0.000524027,lm_bioabove,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Pacific,10.67084707,2.382192789,4.479422121,7.78E-06,lm_bioabove,NA
+year:inside_mpaOutside MPA:bioregionTemperate Southern,-4.259430517,2.650196304,-1.607213213,0.108118494,lm_bioabove,NA
+year:inside_mpaOutside MPA:bioregionTropical Atlantic,8.942077457,3.763060558,2.376277851,0.01755407,lm_bioabove,NA
+year:inside_mpaOutside MPA:bioregionTropical Indo Pacific,7.552259982,2.166399809,3.486087818,0.000497553,lm_bioabove,NA
+(Intercept),20618.28845,8199.648282,2.514533275,0.011979683,lm_biotot,NA
+year,-10.11560796,4.082138377,-2.478016918,0.013275355,lm_biotot,NA
+inside_mpaOutside MPA,3960.339091,13050.13013,0.303471234,0.76155536,lm_biotot,NA
+bioregionTemperate North Atlantic,-8750.205162,12344.49284,-0.708834723,0.478491414,lm_biotot,NA
+bioregionTemperate North Pacific,-7421.615801,11883.79322,-0.62451573,0.532344444,lm_biotot,NA
+bioregionTemperate Southern,-201255.3665,17708.38117,-11.36497823,3.08E-29,lm_biotot,NA
+bioregionTropical Atlantic,65379.40968,23215.82168,2.816157472,0.004897308,lm_biotot,NA
+bioregionTropical Indo Pacific,4433.963341,10551.53449,0.420219765,0.674360088,lm_biotot,NA
+GenusEnhalus,890.5796214,42.70515977,20.85414564,2.38E-89,lm_biotot,NA
+GenusHalodule,-211.3792505,30.41742971,-6.949280478,4.64E-12,lm_biotot,NA
+GenusHalophila,-190.1984288,29.8991523,-6.361331818,2.36E-10,lm_biotot,NA
+GenusPhyllospadix,682.9397245,106.6000014,6.406563934,1.76E-10,lm_biotot,NA
+GenusPosidonia,841.5772087,96.60256313,8.711748234,5.26E-18,lm_biotot,NA
+GenusRuppia,-424.3828538,46.96571761,-9.036013402,3.12E-19,lm_biotot,NA
+GenusSyringodium,-6.074480978,39.16826715,-0.155086794,0.876765086,lm_biotot,NA
+GenusThalassia,369.6766217,28.86455731,12.80728534,1.90E-36,lm_biotot,NA
+GenusThalassodendron,533.7426896,82.27303051,6.487456294,1.04E-10,lm_biotot,NA
+GenusZostera,-160.6579133,32.60141084,-4.92794358,8.84E-07,lm_biotot,NA
+year:inside_mpaOutside MPA,-1.905334324,6.504546864,-0.292923452,0.769604338,lm_biotot,NA
+year:bioregionTemperate North Atlantic,4.361695776,6.133442385,0.711133406,0.477066181,lm_biotot,NA
+year:bioregionTemperate North Pacific,3.689175667,5.915753624,0.623618883,0.532933314,lm_biotot,NA
+year:bioregionTemperate Southern,100.6957585,8.825260155,11.40994789,1.89E-29,lm_biotot,NA
+year:bioregionTropical Atlantic,-32.41464184,11.52926733,-2.811509257,0.004968408,lm_biotot,NA
+year:bioregionTropical Indo Pacific,-2.289210449,5.250677249,-0.435983844,0.662885112,lm_biotot,NA
+inside_mpaOutside MPA:bioregionTemperate North Atlantic,2230.365206,21984.92134,0.10144977,0.919201353,lm_biotot,NA
+inside_mpaOutside MPA:bioregionTemperate North Pacific,-35845.24478,17482.34045,-2.050368764,0.040429812,lm_biotot,NA
+inside_mpaOutside MPA:bioregionTemperate Southern,168116.3794,23322.77479,7.208249489,7.42E-13,lm_biotot,NA
+inside_mpaOutside MPA:bioregionTropical Atlantic,-100644.7982,25885.97565,-3.888004822,0.000103634,lm_biotot,NA
+inside_mpaOutside MPA:bioregionTropical Indo Pacific,-93900.92497,17769.9948,-5.284240431,1.37E-07,lm_biotot,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Atlantic,-1.072024325,10.93907059,-0.09799958,0.921940278,lm_biotot,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Pacific,17.82918731,8.709816912,2.047022055,0.040757534,lm_biotot,NA
+year:inside_mpaOutside MPA:bioregionTemperate Southern,-84.13357256,11.62614469,-7.236583994,6.05E-13,lm_biotot,NA
+year:inside_mpaOutside MPA:bioregionTropical Atlantic,50.00189672,12.86752657,3.885898074,0.000104532,lm_biotot,NA
+year:inside_mpaOutside MPA:bioregionTropical Indo Pacific,46.66890981,8.845467607,5.276025179,1.43E-07,lm_biotot,NA
+(Intercept),-76433.54655,37286.28688,-2.049910381,0.040460983,lm_stdense,NA
+year,38.89325476,18.561597,2.095361447,0.03622352,lm_stdense,NA
+inside_mpaOutside MPA,307983.9119,68900.20951,4.469999643,8.12E-06,lm_stdense,NA
+bioregionTemperate North Atlantic,-940243.8782,99816.61884,-9.41971276,8.80E-21,lm_stdense,NA
+bioregionTemperate North Pacific,-52990.40786,85624.79342,-0.61886757,0.536051163,lm_stdense,NA
+bioregionTemperate Southern,-9346.658505,174492.5825,-0.05356479,0.95728552,lm_stdense,NA
+bioregionTropical Atlantic,174998.7987,173946.4167,1.006050035,0.314473624,lm_stdense,NA
+bioregionTropical Indo Pacific,90192.42389,75191.14529,1.19950858,0.230426127,lm_stdense,NA
+GenusCymodocea,-276.9646813,712.2074642,-0.388882025,0.697391353,lm_stdense,NA
+GenusEnhalus,-183.5133053,815.3306767,-0.225078377,0.821933818,lm_stdense,NA
+GenusHalodule,2941.211834,753.1448692,3.905240485,9.62E-05,lm_stdense,NA
+GenusHalophila,541.7827313,722.2133772,0.750169892,0.453211931,lm_stdense,NA
+GenusPhyllospadix,3972.759615,1144.227948,3.472000156,0.000523986,lm_stdense,NA
+GenusPosidonia,-838.405796,702.8123985,-1.192929718,0.232992383,lm_stdense,NA
+GenusRuppia,5665.311157,922.3949115,6.141958381,9.24E-10,lm_stdense,NA
+GenusSyringodium,-30.4139638,804.9984489,-0.037781394,0.969864523,lm_stdense,NA
+GenusThalassia,12.45377072,722.3019762,0.017241779,0.986244893,lm_stdense,NA
+GenusThalassodendron,433.8722078,880.174288,0.492938971,0.622092225,lm_stdense,NA
+GenusZostera,551.3237521,692.9567903,0.795610578,0.426322126,lm_stdense,NA
+year:inside_mpaOutside MPA,-153.6041596,34.28518744,-4.480190165,7.74E-06,lm_stdense,NA
+year:bioregionTemperate North Atlantic,469.8422969,49.54309395,9.483507375,4.87E-21,lm_stdense,NA
+year:bioregionTemperate North Pacific,26.17853483,42.60631943,0.61442845,0.5389794,lm_stdense,NA
+year:bioregionTemperate Southern,4.458899694,87.23645886,0.0511128,0.95923908,lm_stdense,NA
+year:bioregionTropical Atlantic,-87.85254469,86.67160062,-1.013625502,0.310844218,lm_stdense,NA
+year:bioregionTropical Indo Pacific,-45.55771222,37.43096567,-1.217112928,0.22365815,lm_stdense,NA
+inside_mpaOutside MPA:bioregionTemperate North Atlantic,726412.54,129503.5785,5.609208243,2.22E-08,lm_stdense,NA
+inside_mpaOutside MPA:bioregionTemperate North Pacific,59079.27502,117321.692,0.50356651,0.614603453,lm_stdense,NA
+inside_mpaOutside MPA:bioregionTemperate Southern,-16026.5771,211745.2963,-0.075687996,0.939672435,lm_stdense,NA
+inside_mpaOutside MPA:bioregionTropical Atlantic,-444877.5969,187183.9853,-2.376686212,0.017532093,lm_stdense,NA
+inside_mpaOutside MPA:bioregionTropical Indo Pacific,-301612.6648,106222.2514,-2.839448995,0.004549946,lm_stdense,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Atlantic,-363.9964304,64.37290692,-5.654497331,1.71E-08,lm_stdense,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Pacific,-29.3988239,58.38175996,-0.503561796,0.614606766,lm_stdense,NA
+year:inside_mpaOutside MPA:bioregionTemperate Southern,8.120754083,105.750512,0.076791629,0.938794493,lm_stdense,NA
+year:inside_mpaOutside MPA:bioregionTropical Atlantic,222.2834185,93.26224416,2.383423437,0.017215076,lm_stdense,NA
+year:inside_mpaOutside MPA:bioregionTropical Indo Pacific,150.4127725,52.86014652,2.84548535,0.00446483,lm_stdense,NA
+(Intercept),18989.06431,4147.191499,4.578776821,9.58E-06,lm_prod_tot,NA
+year,-9.518532212,2.078764448,-4.578937368,9.58E-06,lm_prod_tot,NA
+inside_mpaOutside MPA,-18710.82683,4140.962604,-4.518472784,1.23E-05,lm_prod_tot,NA
+bioregionTemperate North Pacific,-17264.91195,3073.415095,-5.617500863,8.83E-08,lm_prod_tot,NA
+bioregionTemperate Southern,-20828.69695,4169.666045,-4.995291404,1.58E-06,lm_prod_tot,NA
+bioregionTropical Atlantic,-272.1172316,242.7231743,-1.121101157,0.263989964,lm_prod_tot,NA
+bioregionTropical Indo Pacific,94.55027401,1294.303541,0.073051082,0.941860263,lm_prod_tot,NA
+GenusEnhalus,0.569123894,2.881573181,0.197504578,0.843693147,lm_prod_tot,NA
+GenusHalodule,-0.110765686,1.298337296,-0.08531349,0.932122979,lm_prod_tot,NA
+GenusHalophila,-0.271074407,2.253490225,-0.120290918,0.904409493,lm_prod_tot,NA
+GenusPhyllospadix,-7.333034085,19.5959298,-0.374212102,0.708761263,lm_prod_tot,NA
+GenusPosidonia,86.87824452,19.20071701,4.524739596,1.20E-05,lm_prod_tot,NA
+GenusThalassia,1.410623894,1.748842744,0.806604195,0.42113846,lm_prod_tot,NA
+GenusThalassodendron,0.480311947,1.76772979,0.27171118,0.786208015,lm_prod_tot,NA
+GenusZostera,-0.062194258,1.298337296,-0.047903005,0.961855612,lm_prod_tot,NA
+year:inside_mpaOutside MPA,9.380464286,2.07566943,4.519247695,1.23E-05,lm_prod_tot,NA
+year:bioregionTemperate North Pacific,8.661817926,1.540491456,5.622762719,8.61E-08,lm_prod_tot,NA
+year:bioregionTemperate Southern,10.43982769,2.089966408,4.995213151,1.58E-06,lm_prod_tot,NA
+year:bioregionTropical Atlantic,0.13496266,0.121148354,1.114028011,0.267002843,lm_prod_tot,NA
+year:bioregionTropical Indo Pacific,-0.047036056,0.646794864,-0.072721752,0.942121903,lm_prod_tot,NA
+inside_mpaOutside MPA:bioregionTemperate North Pacific,NA,NA,NA,NA,lm_prod_tot,NA
+inside_mpaOutside MPA:bioregionTemperate Southern,NA,NA,NA,NA,lm_prod_tot,NA
+inside_mpaOutside MPA:bioregionTropical Atlantic,NA,NA,NA,NA,lm_prod_tot,NA
+inside_mpaOutside MPA:bioregionTropical Indo Pacific,NA,NA,NA,NA,lm_prod_tot,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Pacific,NA,NA,NA,NA,lm_prod_tot,NA
+year:inside_mpaOutside MPA:bioregionTemperate Southern,NA,NA,NA,NA,lm_prod_tot,NA
+year:inside_mpaOutside MPA:bioregionTropical Atlantic,NA,NA,NA,NA,lm_prod_tot,NA
+year:inside_mpaOutside MPA:bioregionTropical Indo Pacific,NA,NA,NA,NA,lm_prod_tot,NA
+(Intercept),-9967.393167,1958.162315,-5.090177198,1.64E-06,lm_prod_shoot,NA
+year,4.97375,0.977126895,5.090178181,1.64E-06,lm_prod_shoot,NA
+inside_mpaOutside MPA,-3.815583333,1.889860604,-2.018976069,0.046113592,lm_prod_shoot,NA
+bioregionTemperate North Atlantic,33.84221552,7.026666433,4.81625474,5.10E-06,lm_prod_shoot,NA
+bioregionTemperate North Pacific,54.42625,8.310367063,6.549199282,2.38E-09,lm_prod_shoot,NA
+bioregionTropical Indo Pacific,NA,NA,NA,NA,lm_prod_shoot,NA
+GenusHalodule,-0.48,2.256577903,-0.212711469,0.83197655,lm_prod_shoot,NA
+GenusPhyllospadix,NA,NA,NA,NA,lm_prod_shoot,NA
+GenusPosidonia,NA,NA,NA,NA,lm_prod_shoot,NA
+GenusZostera,NA,NA,NA,NA,lm_prod_shoot,NA
+year:inside_mpaOutside MPA,NA,NA,NA,NA,lm_prod_shoot,NA
+year:bioregionTemperate North Atlantic,NA,NA,NA,NA,lm_prod_shoot,NA
+year:bioregionTemperate North Pacific,NA,NA,NA,NA,lm_prod_shoot,NA
+year:bioregionTropical Indo Pacific,NA,NA,NA,NA,lm_prod_shoot,NA
+inside_mpaOutside MPA:bioregionTemperate North Atlantic,NA,NA,NA,NA,lm_prod_shoot,NA
+inside_mpaOutside MPA:bioregionTemperate North Pacific,NA,NA,NA,NA,lm_prod_shoot,NA
+inside_mpaOutside MPA:bioregionTropical Indo Pacific,NA,NA,NA,NA,lm_prod_shoot,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Atlantic,NA,NA,NA,NA,lm_prod_shoot,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Pacific,NA,NA,NA,NA,lm_prod_shoot,NA
+year:inside_mpaOutside MPA:bioregionTropical Indo Pacific,NA,NA,NA,NA,lm_prod_shoot,NA
+(Intercept),-1383.736536,11804.91285,-0.117217006,0.906742948,lm_prod_leaf,NA
+year,0.690214286,5.882358227,0.117336323,0.906648455,lm_prod_leaf,NA
+inside_mpaOutside MPA,1030.639008,12329.84979,0.083588935,0.933422255,lm_prod_leaf,NA
+bioregionTemperate North Atlantic,393.4225612,3910.936704,0.100595482,0.919918578,lm_prod_leaf,NA
+bioregionTemperate North Pacific,807.2798491,11974.4078,0.0674171,0.946281065,lm_prod_leaf,NA
+bioregionTemperate Southern,29.78689286,16.8673196,1.765952953,0.078114955,lm_prod_leaf,NA
+bioregionTropical Atlantic,2051.681406,3643.680639,0.563079372,0.573674996,lm_prod_leaf,NA
+bioregionTropical Indo Pacific,2286.069446,11869.99183,0.192592335,0.847369385,lm_prod_leaf,NA
+GenusEnhalus,-0.071718964,5.034055008,-0.014246758,0.988639739,lm_prod_leaf,NA
+GenusHalodule,-0.78,7.336589704,-0.106316427,0.915380995,lm_prod_leaf,NA
+GenusHalophila,NA,NA,NA,NA,lm_prod_leaf,NA
+GenusPhyllospadix,-10.29865191,4.602483875,-2.237629112,0.025757901,lm_prod_leaf,NA
+GenusPosidonia,-0.089892857,6.503191707,-0.013822883,0.988977712,lm_prod_leaf,NA
+GenusThalassia,0.323596757,4.36930748,0.074061338,0.940996099,lm_prod_leaf,NA
+GenusThalassodendron,-8.20587714,7.947427943,-1.032519854,0.302410371,lm_prod_leaf,NA
+GenusZostera,NA,NA,NA,NA,lm_prod_leaf,NA
+year:inside_mpaOutside MPA,-0.513731699,6.143993546,-0.083615273,0.933401325,lm_prod_leaf,NA
+year:bioregionTemperate North Atlantic,-0.196118467,1.948644165,-0.10064355,0.919880441,lm_prod_leaf,NA
+year:bioregionTemperate North Pacific,-0.402267291,5.96710037,-0.067414199,0.946283373,lm_prod_leaf,NA
+year:bioregionTemperate Southern,NA,NA,NA,NA,lm_prod_leaf,NA
+year:bioregionTropical Atlantic,-1.022442374,1.816085151,-0.56299253,0.573734077,lm_prod_leaf,NA
+year:bioregionTropical Indo Pacific,-1.137371377,5.914652761,-0.192297236,0.847600376,lm_prod_leaf,NA
+inside_mpaOutside MPA:bioregionTemperate North Atlantic,-0.308737388,12.02020313,-0.025684873,0.979520633,lm_prod_leaf,NA
+inside_mpaOutside MPA:bioregionTemperate North Pacific,2292.4758,12506.64385,0.183300638,0.854648733,lm_prod_leaf,NA
+inside_mpaOutside MPA:bioregionTemperate Southern,NA,NA,NA,NA,lm_prod_leaf,NA
+inside_mpaOutside MPA:bioregionTropical Atlantic,NA,NA,NA,NA,lm_prod_leaf,NA
+inside_mpaOutside MPA:bioregionTropical Indo Pacific,-1043.982539,12373.22925,-0.084374299,0.9327982,lm_prod_leaf,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Atlantic,NA,NA,NA,NA,lm_prod_leaf,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Pacific,-1.139444037,6.232374347,-0.182826636,0.855020416,lm_prod_leaf,NA
+year:inside_mpaOutside MPA:bioregionTemperate Southern,NA,NA,NA,NA,lm_prod_leaf,NA
+year:inside_mpaOutside MPA:bioregionTropical Atlantic,NA,NA,NA,NA,lm_prod_leaf,NA
+year:inside_mpaOutside MPA:bioregionTropical Indo Pacific,0.51998322,6.165543974,0.084336957,0.93282787,lm_prod_leaf,NA
+(Intercept),2104.674822,1046.008393,2.012101275,0.044378286,lm_cover_pct,NA
+year,-1.023153831,0.519534135,-1.969367866,0.049084905,lm_cover_pct,NA
+inside_mpaOutside MPA,6681.964934,4887.903573,1.367041071,0.171806402,lm_cover_pct,NA
+bioregionTemperate North Atlantic,6658.520587,2587.165426,2.573674076,0.010152721,lm_cover_pct,NA
+bioregionTemperate North Pacific,11883.41647,10574.09034,1.123823997,0.261257985,lm_cover_pct,NA
+bioregionTemperate Southern,8916.502775,2869.135558,3.107731438,0.001918803,lm_cover_pct,NA
+bioregionTropical Atlantic,-12670.33925,5521.923857,-2.294551606,0.021889109,lm_cover_pct,NA
+bioregionTropical Indo Pacific,-5626.859844,3253.305943,-1.729582137,0.083899769,lm_cover_pct,NA
+GenusCymodocea,-1.020790077,13.62168996,-0.074938578,0.940273045,lm_cover_pct,NA
+GenusEnhalus,8.83486113,14.31561342,0.617148624,0.537225397,lm_cover_pct,NA
+GenusHalodule,-8.708873405,13.80910407,-0.630661726,0.528352707,lm_cover_pct,NA
+GenusHalophila,1.27647152,13.66291697,0.093425988,0.92557696,lm_cover_pct,NA
+GenusPhyllospadix,-189.041355,108.1956813,-1.747217196,0.080793459,lm_cover_pct,NA
+GenusPosidonia,7.463139412,14.76039531,0.50561921,0.613194343,lm_cover_pct,NA
+GenusRuppia,-9.415692463,14.9297208,-0.630667685,0.52834881,lm_cover_pct,NA
+GenusSyringodium,-1.10213755,14.06550193,-0.078357499,0.937553577,lm_cover_pct,NA
+GenusThalassia,2.245326007,13.74218635,0.163389285,0.870232781,lm_cover_pct,NA
+GenusThalassodendron,33.18953125,17.23723249,1.925455914,0.054351191,lm_cover_pct,NA
+GenusZostera,10.08740277,14.45908666,0.69765145,0.485497586,lm_cover_pct,NA
+year:inside_mpaOutside MPA,-3.3088447,2.422684575,-1.365776104,0.17220314,lm_cover_pct,NA
+year:bioregionTemperate North Atlantic,-3.305004801,1.283506151,-2.574981662,0.010114582,lm_cover_pct,NA
+year:bioregionTemperate North Pacific,-5.914990499,5.247035025,-1.127301509,0.259785759,lm_cover_pct,NA
+year:bioregionTemperate Southern,-4.441356393,1.426866006,-3.112665362,0.00188721,lm_cover_pct,NA
+year:bioregionTropical Atlantic,6.283726609,2.740131957,2.293220439,0.021965786,lm_cover_pct,NA
+year:bioregionTropical Indo Pacific,2.787153344,1.615909183,1.724820537,0.084754889,lm_cover_pct,NA
+inside_mpaOutside MPA:bioregionTemperate North Atlantic,-14537.99588,6805.275122,-2.136283342,0.032809218,lm_cover_pct,NA
+inside_mpaOutside MPA:bioregionTemperate North Pacific,NA,NA,NA,NA,lm_cover_pct,NA
+inside_mpaOutside MPA:bioregionTemperate Southern,-11599.36246,5753.107645,-2.016190757,0.04394856,lm_cover_pct,NA
+inside_mpaOutside MPA:bioregionTropical Atlantic,-231.5012189,7382.052726,-0.031360006,0.974986387,lm_cover_pct,NA
+inside_mpaOutside MPA:bioregionTropical Indo Pacific,-2093.000689,5766.626617,-0.362950617,0.7166902,lm_cover_pct,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Atlantic,7.207229993,3.376296956,2.134655241,0.032942297,lm_cover_pct,NA
+year:inside_mpaOutside MPA:bioregionTemperate North Pacific,NA,NA,NA,NA,lm_cover_pct,NA
+year:inside_mpaOutside MPA:bioregionTemperate Southern,5.761328329,2.854053503,2.018647626,0.043692085,lm_cover_pct,NA
+year:inside_mpaOutside MPA:bioregionTropical Atlantic,0.121088262,3.661217101,0.033073226,0.97362036,lm_cover_pct,NA
+year:inside_mpaOutside MPA:bioregionTropical Indo Pacific,1.022299508,2.85992161,0.357457178,0.720797198,lm_cover_pct,NA
+(Intercept),2035.773856,969.3190254,2.100210357,NA,lmm_bioabove,fixed
+year,-0.654864762,0.481495652,-1.360063706,NA,lmm_bioabove,fixed
+inside_mpaOutside MPA,-6775.699001,1206.386842,-5.616522632,NA,lmm_bioabove,fixed
+GenusCymodocea,-625.128251,30.63081893,-20.40847332,NA,lmm_bioabove,fixed
+GenusEnhalus,-562.7635291,32.06553926,-17.55041525,NA,lmm_bioabove,fixed
+GenusHalodule,-689.9427307,31.29127135,-22.04904758,NA,lmm_bioabove,fixed
+GenusHalophila,-670.7569032,30.90592445,-21.703182,NA,lmm_bioabove,fixed
+GenusPhyllospadix,-158.8884055,41.50708952,-3.827982335,NA,lmm_bioabove,fixed
+GenusPosidonia,-480.9110207,30.0490989,-16.00417445,NA,lmm_bioabove,fixed
+GenusRuppia,-702.3235669,32.0008078,-21.94705744,NA,lmm_bioabove,fixed
+GenusSyringodium,-635.4796649,32.65990687,-19.45748552,NA,lmm_bioabove,fixed
+GenusThalassia,-595.708455,30.7980335,-19.34241857,NA,lmm_bioabove,fixed
+GenusThalassodendron,-516.6015331,35.27466174,-14.64511657,NA,lmm_bioabove,fixed
+GenusZostera,-641.5152355,29.79317411,-21.53228901,NA,lmm_bioabove,fixed
+year:inside_mpaOutside MPA,3.376250668,0.600656394,5.620935195,NA,lmm_bioabove,fixed
+(Intercept),15147.80201,3694.579613,4.100006928,NA,lmm_biotot,fixed
+year,-7.364443206,1.835433253,-4.012373206,NA,lmm_biotot,fixed
+inside_mpaOutside MPA,-30391.13995,4967.813463,-6.11760892,NA,lmm_biotot,fixed
+GenusEnhalus,877.8513005,43.32616974,20.26145643,NA,lmm_biotot,fixed
+GenusHalodule,-237.1545028,31.43124869,-7.545182347,NA,lmm_biotot,fixed
+GenusHalophila,-208.6875223,30.24990214,-6.898783387,NA,lmm_biotot,fixed
+GenusPhyllospadix,675.0859695,100.6666534,6.706152896,NA,lmm_biotot,fixed
+GenusPosidonia,838.9687578,98.06751225,8.555012139,NA,lmm_biotot,fixed
+GenusRuppia,-484.3873242,47.11622347,-10.28069078,NA,lmm_biotot,fixed
+GenusSyringodium,-32.56653763,40.96086762,-0.795064644,NA,lmm_biotot,fixed
+GenusThalassia,369.1540889,29.53921651,12.49708464,NA,lmm_biotot,fixed
+GenusThalassodendron,573.3313617,84.44512991,6.789395224,NA,lmm_biotot,fixed
+GenusZostera,-150.8040673,29.46350933,-5.118333517,NA,lmm_biotot,fixed
+year:inside_mpaOutside MPA,15.17559268,2.47134588,6.140618682,NA,lmm_biotot,fixed
+(Intercept),-340443.9707,28873.47446,-11.79089032,NA,lmm_stdense,fixed
+year,171.1696318,14.34592475,11.93158579,NA,lmm_stdense,fixed
+inside_mpaOutside MPA,337566.6312,37722.38118,8.94870951,NA,lmm_stdense,fixed
+GenusCymodocea,-151.7602351,773.5062687,-0.196197809,NA,lmm_stdense,fixed
+GenusEnhalus,-1256.898664,888.969611,-1.413882599,NA,lmm_stdense,fixed
+GenusHalodule,2550.806731,818.3790656,3.116901248,NA,lmm_stdense,fixed
+GenusHalophila,-339.1780486,787.0508161,-0.430948093,NA,lmm_stdense,fixed
+GenusPhyllospadix,5688.422744,1207.93941,4.709195425,NA,lmm_stdense,fixed
+GenusPosidonia,-860.5451406,769.4630276,-1.118371006,NA,lmm_stdense,fixed
+GenusRuppia,5236.494846,1015.242492,5.157875963,NA,lmm_stdense,fixed
+GenusSyringodium,34.48829677,879.4792139,0.039214454,NA,lmm_stdense,fixed
+GenusThalassia,-566.2938373,784.8928149,-0.721491937,NA,lmm_stdense,fixed
+GenusThalassodendron,356.7710843,961.0479938,0.371231288,NA,lmm_stdense,fixed
+GenusZostera,169.7526248,757.1131624,0.224210373,NA,lmm_stdense,fixed
+year:inside_mpaOutside MPA,-169.0144088,18.7718242,-9.003621968,NA,lmm_stdense,fixed
+(Intercept),-1697.75144,424.761956,-3.996947975,NA,lmm_prod_tot,fixed
+year,0.849795466,0.212627296,3.996643341,NA,lmm_prod_tot,fixed
+inside_mpaOutside MPA,1725.301861,435.832167,3.958638189,NA,lmm_prod_tot,fixed
+GenusEnhalus,0.003337611,2.328343657,0.00143347,NA,lmm_prod_tot,fixed
+GenusHalodule,-0.253879133,1.413497421,-0.179610609,NA,lmm_prod_tot,fixed
+GenusHalophila,-0.159274321,2.210138203,-0.072065322,NA,lmm_prod_tot,fixed
+GenusPhyllospadix,30.62369003,2.066575435,14.81856869,NA,lmm_prod_tot,fixed
+GenusPosidonia,-6.009426517,2.405425421,-2.498280123,NA,lmm_prod_tot,fixed
+GenusThalassia,1.266302118,1.595454905,0.793693457,NA,lmm_prod_tot,fixed
+GenusThalassodendron,0.428411869,1.880292686,0.227843182,NA,lmm_prod_tot,fixed
+GenusZostera,-0.205307704,1.413497421,-0.145248022,NA,lmm_prod_tot,fixed
+year:inside_mpaOutside MPA,-0.863604046,0.217997599,-3.961530084,NA,lmm_prod_tot,fixed
+(Intercept),-9967.393713,1958.166549,-5.090166472,NA,lmm_prod_shoot,fixed
+year,4.973750273,0.977126922,5.090178321,NA,lmm_prod_shoot,fixed
+inside_mpaOutside MPA,-3.815583604,6.025767366,-0.633211236,NA,lmm_prod_shoot,fixed
+GenusHalodule,-0.48,2.256577903,-0.212711469,NA,lmm_prod_shoot,fixed
+GenusPhyllospadix,54.42625227,10.08962356,5.394279772,NA,lmm_prod_shoot,fixed
+GenusZostera,33.84221743,9.061586116,3.734690263,NA,lmm_prod_shoot,fixed
+(Intercept),-414.6826909,641.0912908,-0.646838753,NA,lmm_prod_leaf,fixed
+year,0.20649921,0.319373149,0.646576614,NA,lmm_prod_leaf,fixed
+inside_mpaOutside MPA,1959.188159,660.5364465,2.966056103,NA,lmm_prod_leaf,fixed
+GenusEnhalus,-1.678305044,4.547045031,-0.36909796,NA,lmm_prod_leaf,fixed
+GenusHalodule,-0.281859217,7.182015126,-0.039245144,NA,lmm_prod_leaf,fixed
+GenusHalophila,30.58177587,14.4306812,2.119219145,NA,lmm_prod_leaf,fixed
+GenusPhyllospadix,-6.269076922,7.084514311,-0.884898618,NA,lmm_prod_leaf,fixed
+GenusPosidonia,2.381116974,5.51464125,0.431780939,NA,lmm_prod_leaf,fixed
+GenusThalassia,-0.628374261,3.562571257,-0.17638223,NA,lmm_prod_leaf,fixed
+GenusThalassodendron,-8.967149749,5.454490639,-1.643993975,NA,lmm_prod_leaf,fixed
+GenusZostera,-2.594846053,5.626030506,-0.461221469,NA,lmm_prod_leaf,fixed
+year:inside_mpaOutside MPA,-0.974431733,0.329290349,-2.95918704,NA,lmm_prod_leaf,fixed
+(Intercept),1321.768284,859.8075885,1.537283808,NA,lmm_cover_pct,fixed
+year,-0.632781061,0.427377954,-1.480612312,NA,lmm_cover_pct,fixed
+inside_mpaOutside MPA,-603.3044881,919.4886374,-0.656130444,NA,lmm_cover_pct,fixed
+GenusCymodocea,-2.453126347,13.55134273,-0.181024596,NA,lmm_cover_pct,fixed
+GenusEnhalus,3.769423217,14.26236175,0.264291657,NA,lmm_cover_pct,fixed
+GenusHalodule,-15.22448329,13.75532601,-1.106806431,NA,lmm_cover_pct,fixed
+GenusHalophila,-4.041663513,13.61764725,-0.296796021,NA,lmm_cover_pct,fixed
+GenusPhyllospadix,-10.59407883,17.63725931,-0.600664686,NA,lmm_cover_pct,fixed
+GenusPosidonia,8.427279147,14.55733477,0.578902614,NA,lmm_cover_pct,fixed
+GenusRuppia,-25.48642524,14.79146171,-1.723049807,NA,lmm_cover_pct,fixed
+GenusSyringodium,-6.926835574,13.9942799,-0.494976206,NA,lmm_cover_pct,fixed
+GenusThalassia,-2.094338689,13.66337518,-0.153281211,NA,lmm_cover_pct,fixed
+GenusThalassodendron,24.85779316,17.31244352,1.435833892,NA,lmm_cover_pct,fixed
+GenusZostera,-4.115998653,14.25834053,-0.28867305,NA,lmm_cover_pct,fixed
+year:inside_mpaOutside MPA,0.298467697,0.456658069,0.653591204,NA,lmm_cover_pct,fixed

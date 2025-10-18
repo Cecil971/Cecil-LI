@@ -1,0 +1,889 @@
+---
+title: "MPA"
+output: html_document
+date: "2025-09-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(terra)
+library(vegan)
+library(lme4)
+library(mgcv)
+library(broom)
+library(broom.mixed)
+library(car)
+library(purrr)
+library(factoextra)
+sf_use_s2(FALSE)
+library(ggeffects)
+library(png)
+library(magick)
+library(grid)
+library(rnaturalearth)
+library(patchwork)
+```
+
+```{r, mpa polygon}
+mpa_poly_0 <- st_read("polygons0.shp")%>%
+  filter(STATUS_YR >= 2000 & STATUS_YR <= 2025)
+mpa_0 = vect(mpa_poly_0)
+
+
+mpa_poly_1 <- st_read("polygons1.shp")%>%
+  filter(STATUS_YR >= 2000 & STATUS_YR <= 2025)
+mpa_1 = vect(mpa_poly_1)
+
+
+mpa_poly_2 <- st_read("polygons2.shp")%>%
+  filter(STATUS_YR >= 2000 & STATUS_YR <= 2025)
+mpa_2 = vect(mpa_poly_2)
+
+
+#mpa_poly_0 <- st_make_valid(mpa_poly_0)
+#mpa_poly_1 <- st_make_valid(mpa_poly_1)
+#mpa_poly_2 <- st_make_valid(mpa_poly_2)
+
+mpa_all <- rbind(mpa_0, mpa_1, mpa_2)
+mpa_global = bind_rows(mpa_poly_0, mpa_poly_1, mpa_poly_2)
+```
+
+
+```{r, seagrass data}
+seagrass = read_csv("D:/seagrass/seagrass biomass.csv") %>%
+  filter(`Year obs` >= 1995 & `Year obs` <= 2019)
+summary(seagrass)
+
+
+sf_use_s2(FALSE)
+
+seagrass_sf <- st_as_sf(seagrass,
+                        coords = c("Longitude", "Latitude"),
+                        crs = 4326)
+mpa_global_proj <- st_transform(mpa_global, 54009)  # Mollweide equal-area
+seagrass_sf_proj <- st_transform(seagrass_sf, 54009)
+
+seagrass_sf_proj <- st_join(seagrass_sf_proj, mpa_global_proj["WDPAID"], left = TRUE)
+seagrass_sf_proj$inside_mpa <- ifelse(is.na(seagrass_sf_proj$WDPAID), "Outside MPA", "Inside MPA")
+
+seagrass_buffer <- st_buffer(seagrass_sf_proj, dist = 50000) # buffer in degrees (~50 km)
+
+seagrass_poly <- seagrass_buffer |>
+  group_by(`Seagr bioregion`) |>
+  summarise(geometry = st_union(geometry)) #estimated seagrass polygons
+```
+
+
+
+```{r, seagrass polygon}
+seagrass_polygon <- st_read("seagrasspoly.shp")
+
+```
+
+
+```{r}
+keep_cols <- intersect(names(mpa_global), c("WDPAID","WDPA_PID","IUCN_CAT","NO_TAKE","STATUS_YR"))
+mpa_keep <- mpa_global[, keep_cols]
+
+# Spatial join: seagrass points to MPAs
+joined <- st_join(seagrass_sf, mpa_keep, left=TRUE)
+
+# Classification: inside/outside
+id_field <- if ("WDPA_PID" %in% names(joined)) "WDPA_PID" else "WDPAID"
+joined <- joined %>%
+  mutate(inside_mpa = ifelse(is.na(.data[[id_field]]), "Outside MPA", "Inside MPA"),
+         fisheries = case_when(
+           !is.na(NO_TAKE) & tolower(NO_TAKE) == "all"  ~ "No-take",
+           !is.na(NO_TAKE) & tolower(NO_TAKE) == "some" ~ "Partial",
+           is.na(.data[[id_field]])                     ~ "Outside",
+           TRUE                                         ~ "Multi-use"
+         ))
+
+```
+
+
+```{r}
+dat <- joined %>%
+  st_drop_geometry() %>%
+  rename(year = `Year obs`,
+         bioregion = `Seagr bioregion`,
+         biom_above = `biom above dm [g/m**2]`,
+         biom_below = `biom below dm [g/m**2]`,
+         biom_tot   = `biom tot dm [g/m**2]`,
+         shoot_dens = `shoot dens [#/m**2]`,
+         leaf_dens  = `leaf dens [#/m**2]`,
+         prod_shoot = `shoot production dm [g/m**2/day]`,
+         prod_leaf  = `leaf production dm [g/m**2/day]`,
+         prod_tot = `production total dm [g/m**2/day]`,
+         cover_pct  = `coverage [%]`) %>%
+  mutate(
+    C_above = biom_above * 0.35,   # carbon proxy
+    C_tot   = biom_tot * 0.35,
+    bioregion = factor(bioregion),
+    Genus = factor(Genus),
+    fisheries = factor(fisheries, levels=c("Outside","Multi-use","Partial","No-take"))
+  )
+
+```
+
+
+```{r, ecological profile}
+metrics_summary <- dat %>%
+  group_by(year, bioregion, Genus, inside_mpa) %>%
+  summarise(
+    n_sites = n(),
+    mean_biom_above = mean(biom_above, na.rm=TRUE),
+    mean_biom_tot   = mean(biom_tot, na.rm=TRUE),
+    mean_shoot      = mean(shoot_dens, na.rm=TRUE),
+    mean_prod       = mean(prod_tot, na.rm=TRUE),
+    mean_prod_shoot = mean(prod_shoot, na.rm = TRUE),
+    mean_prod_leaf = mean(prod_leaf, na.rm = TRUE),
+    mean_cover      = mean(cover_pct, na.rm=TRUE),
+    .groups="drop"
+  )
+
+ggplot(metrics_summary, aes(x=year, y=mean_biom_above, color=inside_mpa)) +
+  geom_line() + geom_point() +
+  facet_wrap(~bioregion, scales="free_y") +
+  theme_minimal() +
+  labs(y="Biomass (g/m²)", title="Seagrass biomass (above) trends inside vs outside MPAs") #biomass above~bioregion
+
+ggplot(metrics_summary, aes(x=year, y=mean_biom_tot, color=inside_mpa)) +
+  geom_line() + geom_point() +
+  facet_wrap(~bioregion, scales="free_y") +
+  theme_minimal() +
+  labs(y="Biomass (g/m²)", title="Total seagrass biomass trends inside vs outside MPAs") #biomass total~bioregion
+
+ggplot(metrics_summary, aes(x=year, y=mean_shoot, color=inside_mpa)) +
+  geom_line() + geom_point() +
+  facet_wrap(~bioregion, scales="free_y") +
+  theme_minimal() +
+  labs(y="shoot dens (#/m²)", title="Seagrass shoot dense trends inside vs outside MPAs") #shoot dense~bioregion
+
+#ggplot(metrics_summary, aes(x=year, y=mean_leaf_dens, color=inside_mpa)) +
+  #geom_line() + geom_point() +
+  #facet_wrap(~bioregion, scales="free_y") +
+  #theme_minimal() +
+  #labs(y="Biomass (g/m²)", title="Seagrass leaf dense trends inside vs outside MPAs") #leaf dense~bioregion->not enough data
+
+ggplot(metrics_summary, aes(x=year, y=mean_prod, color=inside_mpa)) +
+  geom_line() + geom_point() +
+  facet_wrap(~bioregion, scales="free_y") +
+  theme_minimal() +
+  labs(y="Production (g/m²/day)", title="Seagrass total production trends inside vs outside MPAs") #total production~bioregion
+
+ggplot(metrics_summary, aes(x=year, y=mean_prod_shoot, color=inside_mpa)) +
+  geom_line() + geom_point() +
+  facet_wrap(~bioregion, scales="free_y") +
+  theme_minimal() +
+  labs(y="Production (g/m²/day)", title="Seagrass shoot production trends inside vs outside MPAs") #total shoot production~bioregion
+
+ggplot(metrics_summary, aes(x=year, y=mean_prod_leaf, color=inside_mpa)) +
+  geom_line() + geom_point() +
+  facet_wrap(~bioregion, scales="free_y") +
+  theme_minimal() +
+  labs(y="Production (g/m²/day)", title="Seagrass leaf production trends inside vs outside MPAs") #leaf production~bioregion
+
+ggplot(metrics_summary, aes(x=year, y=mean_cover, color=inside_mpa)) +
+  geom_line() + geom_point() +
+  facet_wrap(~bioregion, scales="free_y") +
+  theme_minimal() +
+  labs(y="Coverage (%)", title="Seagrass coverage trends inside vs outside MPAs") #coverage~bioregion
+
+
+```
+
+
+```{r}
+ggplot(mpa_poly_0) +
+  geom_sf(fill = "dodgerblue", color = NA, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Global Marine Protected Areas")
+
+ggplot(mpa_global) +
+  geom_sf(fill = "dodgerblue", color = NA, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Global Marine Protected Areas")
+```
+
+
+```{r, seagrass}
+grasstrend <- seagrass_sf_proj %>%
+  filter(!is.na(`Year obs`)) %>%
+  group_by(`Year obs`, inside_mpa) %>%
+  summarise(mean_biomass = mean(`biom above dm [g/m**2]`, na.rm=TRUE),
+            n_sites = n())
+ggplot(grasstrend, aes(x=`Year obs`, y=mean_biomass, color=inside_mpa)) +
+  geom_line(size=1.2) + geom_point() +
+  theme_minimal() +
+  labs(title="Seagrass above-ground biomass (2000–2019)",
+       y="Mean biomass (g/m²)", x="Year") #overall seagrass trend
+
+ggplot() +
+  geom_sf(data = mpa_global_proj, fill="lightblue", alpha=0.3) +
+  geom_sf(data = seagrass_buffer, aes(fill=`Seagr bioregion`), alpha=0.4) +
+  geom_sf(data = seagrass_sf_proj, aes(color=inside_mpa), size=1) +
+  theme_minimal() +
+  labs(title="Seagrass buffered extent vs. MPAs")
+
+
+```
+
+
+```{r, overlap coverage analysis}
+mpa_eq <- st_transform(mpa_global, 54009)    # Mollweide
+sg_eq  <- st_transform(seagrass_polygon, 54009) # requires UNEP-WCMC seagrass polygons
+seagrass_points  <- st_transform(seagrass_sf_proj, 54009)      # biomass points with Seagr bioregion
+seagrass_polygon <- st_transform(seagrass_polygon, 54009)
+poly_with_points <- st_join(seagrass_polygon, seagrass_points["Seagr bioregion"], left = TRUE)
+
+poly_bioregion <- poly_with_points %>%
+  st_drop_geometry() %>%
+  group_by(row_id = row_number() %% nrow(seagrass_polygon), `Seagr bioregion`) %>%
+  tally() %>%
+  group_by(row_id) %>%
+  slice_max(n, n = 1, with_ties = FALSE)   # keep most frequent bioregion
+
+# 5. Attach bioregion back to polygons
+seagrass_polygon$Seagr_bioregion <- poly_bioregion$`Seagr bioregion`
+
+# Intersections
+sg_in_mpa <- st_intersection(sg_eq, mpa_eq)
+sg_in_mpa$overlap_area <- st_area(sg_in_mpa)
+
+# Summarise by MPA year
+overlap_by_year <- sg_in_mpa %>%
+  group_by(STATUS_YR) %>%
+  summarise(total_overlap = sum(overlap_area, na.rm=TRUE))
+
+# Denominator = global seagrass area
+total_seagrass_area <- sum(st_area(sg_eq))
+
+overlap_by_year <- overlap_by_year %>%
+  mutate(percent_coverage = (total_overlap / total_seagrass_area) * 100)
+
+overlap_by_year <- overlap_by_year %>%
+  mutate(percent_coverage = as.numeric(percent_coverage))
+
+ggplot(overlap_by_year, aes(x=STATUS_YR, y=percent_coverage)) +
+  geom_line(color="green", size=1.2) +
+  geom_point(color="darkblue") +
+  theme_minimal() +
+  labs(y="% of global seagrass protected", x="MPA designation year", title = "Annual increase of MPA among seagrass meadows")
+
+```
+
+
+```{r, overlap by bioregion}
+# Make sure geometries are valid
+# Simplify polygons (tolerance in meters, adjust as needed)
+sg_eq_simplified  <- st_simplify(st_make_valid(seagrass_polygon), dTolerance = 1000)
+mpa_eq_simplified <- st_simplify(st_make_valid(mpa_eq), dTolerance = 1000)
+
+
+analyze_bioregion <- function(region_name) {
+  message("Processing: ", region_name)
+  
+  # Subset seagrass polygons
+  sg_sub <- sg_eq_simplified %>% filter(Seagr_bioregion == region_name)
+  if (nrow(sg_sub) == 0) return(NULL)
+  
+  # Crop MPAs
+  mpa_sub <- tryCatch({
+    st_crop(mpa_eq_simplified, st_bbox(sg_sub))
+  }, error = function(e) NULL)
+  
+  if (is.null(mpa_sub) || nrow(mpa_sub) == 0) return(NULL)
+  
+  # Intersections
+  sg_mpa_sub <- tryCatch({
+    st_intersection(sg_sub, mpa_sub)
+  }, error = function(e) NULL)
+  
+  # Area
+  overlap_area <- if (!is.null(sg_mpa_sub) && nrow(sg_mpa_sub) > 0) {
+    sum(as.numeric(st_area(sg_mpa_sub)), na.rm=TRUE)
+  } else 0
+  
+  total_area <- sum(as.numeric(st_area(sg_sub)), na.rm=TRUE)
+  
+  coverage <- tibble(
+    bioregion = region_name,
+    overlap_area = overlap_area,
+    area_total = total_area,
+    percent_coverage = 100 * overlap_area / total_area
+  )
+  
+  # Map (always print seagrass + MPA, even if no overlap)
+  p <- ggplot() +
+    geom_sf(data = mpa_sub, fill="lightblue", alpha=0.4, color="blue") +
+    geom_sf(data = sg_sub, fill="red", alpha=0.4, color="darkred") +
+    {if (overlap_area > 0) geom_sf(data = sg_mpa_sub, fill="purple", alpha=0.7, color="purple")} +
+    theme_minimal() +
+    labs(
+      title = paste("Seagrass vs MPAs in", region_name),
+      subtitle = "Red = Seagrass, Blue = MPAs, Purple = Overlap"
+    )
+  
+  print(p)  # 👈 force plotting when the function is called
+  
+  return(list(coverage = coverage, plot = p))
+}
+
+
+# Apply to all bioregions (skip NA)
+unique_bioregions <- na.omit(unique(seagrass_polygon$Seagr_bioregion))
+results <- list()
+for (region in unique_bioregions) {
+  res <- tryCatch(
+    analyze_bioregion(region),
+    error = function(e) {
+      message("⚠️ Skipping ", region, " due to error: ", e$message)
+      return(NULL)
+    }
+  )
+  if (!is.null(res)) {
+    results[[region]] <- res
+    print(res$plot)   # 👈 force plotting here
+  }
+}
+
+
+#Combine coverage summaries
+coverage_all <- bind_rows(map(results, "coverage"))
+
+#Example: print plot for first region
+print(results[[1]]$plot) #Tropical Indo Pacific
+print(results[[2]]$plot) #Tropical Atlantic
+print(results[[3]]$plot) #Temperate Southern
+print(results[[4]]$plot) #Temperate North Atlantic
+print(results[[5]]$plot) #Temperate North Pacific
+print(results[[6]]$plot) #Mediterranean
+
+#Coverage table
+print(coverage_all)
+
+
+```
+
+
+
+```{r, LM model}
+# ================================
+# Linear and Mixed Models on Seagrass Metrics
+# ================================
+
+# 1. Simple linear models (no random effects)
+fit_lm_bioabove   <- lm(biom_above ~ year * inside_mpa * bioregion + Genus, data=dat)
+summary(fit_lm_bioabove)
+
+fit_lm_biobelow   <- lm(biom_below ~ year * inside_mpa * bioregion + Genus, data=dat)
+summary(fit_lm_biobelow)
+
+fit_lm_biotot     <- lm(biom_tot ~ year * inside_mpa * bioregion + Genus, data=dat)
+summary(fit_lm_biotot)
+
+fit_lm_stdense    <- lm(shoot_dens ~ year * inside_mpa * bioregion + Genus, data=dat)
+summary(fit_lm_stdense)
+
+fit_lm_prod_tot   <- lm(prod_tot ~ year * inside_mpa * bioregion + Genus, data=dat)
+summary(fit_lm_prod_tot)
+
+fit_lm_prod_shoot <- lm(prod_shoot ~ year * inside_mpa * bioregion + Genus, data=dat)
+summary(fit_lm_prod_shoot)
+
+fit_lm_prod_leaf  <- lm(prod_leaf ~ year * inside_mpa * bioregion + Genus, data=dat)
+summary(fit_lm_prod_leaf)
+
+fit_lm_cover_pct  <- lm(cover_pct ~ year * inside_mpa * bioregion + Genus, data=dat)
+summary(fit_lm_cover_pct)
+
+
+
+
+fit_lmm_bioabove   <- lmer(biom_above ~ year * inside_mpa + (1|bioregion) + Genus, data=dat)
+summary(fit_lmm_bioabove)
+
+fit_lmm_biobelow   <- lmer(biom_below ~ year * inside_mpa + (1|bioregion) + Genus, data=dat)
+summary(fit_lmm_bioabove)
+
+fit_lmm_biotot     <- lmer(biom_tot ~ year * inside_mpa + (1|bioregion) + Genus, data=dat)
+summary(fit_lmm_biotot)
+
+fit_lmm_stdense    <- lmer(shoot_dens ~ year * inside_mpa + (1|bioregion) + Genus, data=dat)
+summary(fit_lmm_stdense)
+
+fit_lmm_prod_tot   <- lmer(prod_tot ~ year * inside_mpa + (1|bioregion) + Genus, data=dat)
+summary(fit_lmm_prod_tot)
+
+fit_lmm_prod_shoot <- lmer(prod_shoot ~ year * inside_mpa + (1|bioregion) + Genus, data=dat)
+summary(fit_lmm_prod_shoot)
+
+fit_lmm_prod_leaf  <- lmer(prod_leaf ~ year * inside_mpa + (1|bioregion) + Genus, data=dat)
+summary(fit_lmm_prod_leaf)
+
+fit_lmm_cover_pct  <- lmer(cover_pct ~ year * inside_mpa + (1|bioregion) + Genus, data=dat)
+summary(fit_lmm_cover_pct)
+
+
+
+```
+
+```{r, lm plots}
+ggplot(dat, aes(x=year, y=biom_above, color=inside_mpa)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method="lm") +
+  theme_minimal() +
+  labs(title="Above-ground biomass trends inside vs outside MPAs",
+       y="Biomass above-ground (g/m²)") #above biomass
+
+ggplot(dat, aes(x=year, y=biom_tot, color=inside_mpa)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method="lm") +
+  theme_minimal() +
+  labs(title="total biomass trends inside vs outside MPAs",
+       y="Biomass above-ground (g/m²)") #total biomass
+
+ggplot(dat, aes(x=year, y=shoot_dens, color=inside_mpa)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method="lm") +
+  theme_minimal() +
+  labs(title="shoot density trends inside vs outside MPAs",
+       y="Biomass above-ground (g/m²)") #shoot density
+
+ggplot(dat, aes(x=year, y=prod_tot, color=inside_mpa)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method="lm") +
+  theme_minimal() +
+  labs(title="total production trends inside vs outside MPAs",
+       y="Biomass above-ground (g/m²)") #total production
+
+ggplot(dat, aes(x=year, y=prod_shoot, color=inside_mpa)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method="lm") +
+  theme_minimal() +
+  labs(title="shoot production trends inside vs outside MPAs",
+       y="Biomass above-ground (g/m²)") #shoot production
+
+ggplot(dat, aes(x=year, y=prod_leaf, color=inside_mpa)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method="lm") +
+  theme_minimal() +
+  labs(title="leaf production trends inside vs outside MPAs",
+       y="Biomass above-ground (g/m²)") #leaf production
+
+ggplot(dat, aes(x=year, y=cover_pct, color=inside_mpa)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method="lm") +
+  theme_minimal() +
+  labs(title="seagrass coverage trends inside vs outside MPAs",
+       y="Biomass above-ground (g/m²)") #seagrass coverage
+
+```
+
+
+```{r, fishery actions}
+fit_lmm_fish <- lmer(biom_tot ~ year * fisheries + (1|bioregion), data=dat)
+fit_lmm_fish_cover <- lmer(cover_pct ~ year * fisheries + (1|bioregion), data=dat)
+fit_lmm_fish_prod_tot <- lmer(prod_tot ~ year * fisheries + (1|bioregion), data=dat)
+
+ggplot(dat, aes(x=year, y=biom_tot, color=fisheries)) +
+  geom_point(alpha=0.3) +
+  geom_smooth(method="lm", se=TRUE) +
+  theme_minimal() +
+  labs(title="Biomass trends under different fisheries management",
+       y="Total biomass (g/m²)")
+# ensure factors are clean for facets/legend
+dat$fisheries  <- factor(dat$fisheries)
+dat$inside_mpa <- factor(dat$inside_mpa, levels = c("Inside MPA","Outside MPA"))
+
+ggplot(dat, aes(x = year, y = cover_pct, color = fisheries)) +
+  ggplot2::geom_point(alpha = 0.3, na.rm = TRUE) +
+  ggplot2::geom_smooth(method = stats::lm, formula = y ~ x, se = TRUE, na.rm = TRUE) +
+  ggplot2::facet_wrap(~ inside_mpa, nrow = 1) +
+  ggplot2::scale_color_brewer(palette = "Dark2") +
+  ggplot2::labs(
+    title = "Coverage trends under different fisheries management",
+    x = "Year", y = "Cover (%)", color = "Fisheries regime"
+  ) +
+  ggplot2::theme_minimal(base_size = 13) +
+  ggplot2::theme(legend.position = "bottom")
+
+
+```
+
+```{r, inside&outside mpa variance}
+
+leveneTest(biom_tot ~ inside_mpa, data=dat)
+```
+
+```{r, different index}
+# 1. Collapse to bioregion × inside_mpa × genus
+bioregion_matrix <- dat %>%
+  group_by(bioregion, inside_mpa, Genus) %>%
+  summarise(total_biomass = mean(biom_above, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = Genus, values_from = total_biomass, values_fill = 0)
+
+# 2. Split metadata and abundance matrix
+abund_matrix_bioregion <- bioregion_matrix %>% select(-bioregion, -inside_mpa)
+
+# 3. Calculate indices
+bioregion_matrix$Simpson  <- diversity(abund_matrix_bioregion, index = "simpson")
+bioregion_matrix$Shannon  <- diversity(abund_matrix_bioregion, index = "shannon")
+bioregion_matrix$Evenness <- bioregion_matrix$Shannon / log(specnumber(abund_matrix_bioregion))
+
+# 4. Final summary table
+div_summary_bioregion <- bioregion_matrix %>%
+  select(bioregion, inside_mpa, Simpson, Shannon, Evenness)
+
+print(div_summary_bioregion)
+
+# ---- Optional plot ----
+library(ggplot2)
+ggplot(div_summary_bioregion, aes(x = bioregion, y = Shannon, fill = inside_mpa)) +
+  geom_col(position = "dodge") +
+  theme_minimal() +
+  labs(title = "Seagrass Shannon diversity by Bioregion and MPA status",
+       x = "Bioregion", y = "Shannon Index")
+div_long <- div_summary_bioregion %>%
+  tidyr::pivot_longer(cols = c(Simpson, Shannon, Evenness),
+                      names_to = "Index", values_to = "Value")
+```
+
+
+```{r, overlap by year analysis}
+# Requires polygons (sg_eq = seagrass, mpa_eq = MPAs, both equal-area)
+
+total_seagrass_area <- sum(st_area(sg_eq), na.rm=TRUE)
+
+total_seagrass_area <- sum(as.numeric(st_area(sg_eq)), na.rm=TRUE)
+
+calc_cumulative <- function(year) {
+  mpa_year <- mpa_eq %>% filter(STATUS_YR <= year)
+  sg_in_mpa <- st_intersection(sg_eq, mpa_year)
+  overlap_area <- as.numeric(sum(st_area(sg_in_mpa), na.rm=TRUE))
+  total_area   <- as.numeric(total_seagrass_area)
+
+  tibble(
+    year = as.integer(year),
+    overlap_area = overlap_area,
+    percent_coverage = (overlap_area / total_area) * 100
+  )
+}
+
+years <- 1995:2019
+overlap_by_year <- do.call(rbind, lapply(years, calc_cumulative))
+
+str(overlap_by_year) 
+
+ggplot(overlap_by_year, aes(x=year, y=percent_coverage)) +
+  geom_line(color="darkgreen", size=1.2) +
+  geom_point(color="darkblue") +
+  theme_minimal() +
+  labs(y="% of global seagrass protected", x="Year",
+       title="Cumulative protection of seagrass in MPAs (1995–2019)") #cumulative coverage
+
+```
+
+```{r, BACI}
+dat <- dat %>%
+  mutate(time_since_MPA = year - STATUS_YR,
+         period = case_when(
+           inside_mpa == "Outside MPA" ~ "Control",
+           time_since_MPA < 0          ~ "Before",
+           time_since_MPA >= 0         ~ "After"
+         ))
+
+baci_summary <- dat %>%
+  group_by(period, inside_mpa) %>%
+  summarise(mean_biomass = mean(biom_above, na.rm=TRUE), .groups="drop")
+
+ggplot(baci_summary, aes(x=period, y=mean_biomass, fill=inside_mpa)) +
+  geom_col(position="dodge") +
+  theme_minimal() +
+  labs(title="BACI biomass comparison")
+
+```
+
+```{r, lagged effect}
+dat_in <- dat %>% filter(inside_mpa == "Inside MPA")
+
+fit <- lmer(biom_above ~ time_since_MPA + (1|bioregion), data=dat_in)
+summary(fit)
+
+ggplot(dat_in, aes(x=time_since_MPA, y=biom_above)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method="loess", color="darkgreen") +
+  theme_minimal() +
+  labs(x="Years since MPA designation", y="Above-ground biomass (g/m²)",
+       title="Lagged effect of MPA protection on seagrass biomass")
+
+```
+
+```{r, seagrass community composition}
+# 1. Build site × genus matrix
+site_species <- dat %>%
+  group_by(SiteID, Genus, inside_mpa, fisheries, year, bioregion) %>%
+  summarise(biomass = mean(biom_above, na.rm=TRUE), .groups="drop") %>%
+  tidyr::pivot_wider(names_from = Genus,
+                     values_from = biomass,
+                     values_fill = 0)
+
+# 2. Extract abundance-only matrix
+abund_matrix <- site_species %>%
+  select(-SiteID, -inside_mpa, -fisheries, -year, -bioregion)
+
+# 3. Replace NAs with zeros
+abund_matrix[is.na(abund_matrix)] <- 0
+
+# 4. Calculate row totals (total biomass per site)
+row_totals <- rowSums(abund_matrix)
+
+# 5. Drop empty rows (sites with all zeros)
+abund_matrix_clean <- abund_matrix[row_totals > 0, ]
+
+# Also drop corresponding rows from metadata
+site_species_clean <- site_species[row_totals > 0, ]
+
+
+
+# Run PCA safely
+pca <- prcomp(as.matrix(abund_matrix_clean), scale.=TRUE)
+summary(pca)
+
+# PERMANOVA
+
+perm <- adonis2(
+  abund_matrix_clean ~ inside_mpa,
+  data = site_species_clean,
+  permutations = 999,
+  method = "bray"
+)
+print(perm)
+```
+
+```{r, PCA plots}
+# Extract PCA scores (only sites that made it into abund_matrix_clean)
+pca_scores <- as.data.frame(pca$x[,1:2])
+nrow(pca_scores)
+nrow(site_species_clean)
+dim(abund_matrix_clean)
+dim(site_species_clean)
+
+# Extract scores for first 2 axes
+pca_scores <- as.data.frame(pca$x[,1:2])
+stopifnot(nrow(pca_scores) == nrow(site_species_clean))
+
+# Double-check row counts
+nrow(abund_matrix_clean)        # should be 2882
+nrow(pca$x)                     # must also be 2882
+
+
+# Attach metadata from site_species_clean
+pca_scores$inside_mpa <- site_species_clean$inside_mpa
+pca_scores$bioregion  <- site_species_clean$bioregion
+pca_scores$year       <- site_species_clean$year
+
+# Plot PCA
+
+ggplot(pca_scores, aes(x=PC1, y=PC2, color=inside_mpa, shape=bioregion)) +
+  geom_point(alpha=0.7, size=1) +
+  theme_minimal() +
+  labs(
+    title="PCA of Seagrass Community Composition",
+    subtitle="Colored by MPA status, shaped by bioregion",
+    x="PC1", y="PC2")
+
+```
+
+
+```{r, permanova plot}
+nmds <- metaMDS(abund_matrix_clean, distance="bray", k=2, trymax=50)
+
+# Extract NMDS scores
+nmds_scores <- as.data.frame(scores(nmds))
+nmds_scores$inside_mpa <- site_species_clean$inside_mpa
+
+ggplot(nmds_scores, aes(x=NMDS1, y=NMDS2, color=inside_mpa)) +
+  geom_point(alpha=0.7, size=3) +
+  theme_minimal() +
+  labs(title="NMDS of Seagrass Community Composition",
+       subtitle="Bray-Curtis dissimilarity")
+
+```
+
+
+```{r, cluster}
+vars <- c("biom_above","biom_tot","shoot_dens","leaf_dens","prod_shoot","cover_pct")
+X <- dat %>% select(all_of(vars)) %>% scale()
+X[is.na(X)] <- 0
+
+km <- kmeans(X, centers=3, nstart=50)
+dat$cluster <- factor(km$cluster)
+
+table(dat$cluster, dat$inside_mpa)
+
+```
+
+```{r, cluster plots}
+ggplot(dat, aes(x=year, y=biom_tot, color=cluster)) +
+  geom_point(alpha=0.6) +
+  theme_minimal() +
+  labs(title="Cluster analysis of sites based on seagrass metrics",
+       x="Year", y="Above-ground biomass (g/m²)")
+
+# for nicer cluster plots
+fviz_cluster(km, data = X,
+             geom = "point",
+             ellipse.type = "norm",
+             main = "K-means clustering of seagrass sites")
+
+```
+
+```{r, result extraction}
+# ---- 1. LINEAR & MIXED MODELS ----
+all_model_results <- bind_rows(
+  tidy(fit_lm_bioabove) %>% mutate(model="lm_bioabove"),
+  tidy(fit_lm_biobelow) %>% mutate(model="lm_biobelow"),
+  tidy(fit_lm_biotot)   %>% mutate(model="lm_biotot"),
+  tidy(fit_lm_stdense)  %>% mutate(model="lm_stdense"),
+  tidy(fit_lm_prod_tot) %>% mutate(model="lm_prod_tot"),
+  tidy(fit_lm_prod_shoot) %>% mutate(model="lm_prod_shoot"),
+  tidy(fit_lm_prod_leaf) %>% mutate(model="lm_prod_leaf"),
+  tidy(fit_lm_cover_pct) %>% mutate(model="lm_cover_pct"),
+  
+  broom.mixed::tidy(fit_lmm_bioabove, effects="fixed") %>% mutate(model="lmm_bioabove"),
+  broom.mixed::tidy(fit_lmm_biobelow, effects="fixed") %>% mutate(model="lmm_bioabove"),
+  broom.mixed::tidy(fit_lmm_biotot, effects="fixed")   %>% mutate(model="lmm_biotot"),
+  broom.mixed::tidy(fit_lmm_stdense, effects="fixed")  %>% mutate(model="lmm_stdense"),
+  broom.mixed::tidy(fit_lmm_prod_tot, effects="fixed") %>% mutate(model="lmm_prod_tot"),
+  broom.mixed::tidy(fit_lmm_prod_shoot, effects="fixed") %>% mutate(model="lmm_prod_shoot"),
+  broom.mixed::tidy(fit_lmm_prod_leaf, effects="fixed") %>% mutate(model="lmm_prod_leaf"),
+  broom.mixed::tidy(fit_lmm_cover_pct, effects="fixed") %>% mutate(model="lmm_cover_pct"),
+  broom.mixed::tidy(fit_lmm_fish, effects="fixed") %>% mutate(model="lmm_cover_pct"),
+  broom.mixed::tidy(fit_lmm_fish_prod_tot, effects="fixed") %>% mutate(model="lmm_cover_pct"),
+  broom.mixed::tidy(fit_lmm_fish_cover, effects="fixed") %>% mutate(model="lmm_cover_pct")
+)
+
+fishery = bind_rows(
+  broom.mixed::tidy(fit_lmm_fish, effects="fixed") %>% mutate(model="lmm_fish_totbio"),
+  broom.mixed::tidy(fit_lmm_fish_prod_tot, effects="fixed") %>% mutate(model="lmm__fish_prod_tot"),
+  broom.mixed::tidy(fit_lmm_fish_cover, effects="fixed") %>% mutate(model="lmm_cover_pct")
+)
+# ---- 2. VARIANCE TEST ----
+levene_df <- as.data.frame(car::leveneTest(biom_tot ~ inside_mpa, data=dat))
+
+# ---- 3. DIVERSITY INDICES ----
+div_summary <- site_species %>%
+  group_by(inside_mpa) %>%
+  summarise(mean_simpson = mean(Simpson, na.rm=TRUE),
+            mean_shannon = mean(Shannon, na.rm=TRUE),
+            mean_even    = mean(Evenness, na.rm=TRUE))
+
+# ---- 4. PERMANOVA ----
+perm_results <- as.data.frame(perm)
+perm_results$Factor <- rownames(perm_results)
+rownames(perm_results) <- NULL
+
+# ---- 5. PCA ----
+pca_scores <- as.data.frame(pca$x)
+pca_scores <- cbind(pca_scores, site_species_clean[,c("SiteID","inside_mpa","bioregion","year")])
+pca_loadings <- as.data.frame(pca$rotation)
+pca_var_df <- data.frame(
+  PC = paste0("PC", 1:length(pca$sdev)),
+  Variance_explained = round((pca$sdev^2 / sum(pca$sdev^2)) * 100, 2)
+)
+
+# ---- 6. CLUSTERING ----
+cluster_assignments <- dat %>%
+  select(SiteID, year, bioregion, inside_mpa) %>%
+  mutate(cluster = dat$cluster)
+cluster_centers <- as.data.frame(km$centers) %>%
+  mutate(cluster = row_number())
+
+# ---- 7. BACI ----
+baci_summary <- dat %>%
+  group_by(period, inside_mpa) %>%
+  summarise(mean_biomass = mean(biom_above, na.rm=TRUE), .groups="drop")
+
+# ---- 8. LAGGED EFFECT ----
+lagged_results <- broom.mixed::tidy(fit, effects="fixed") %>%
+  mutate(model="lagged_biom_above")
+
+# ---- 9. OVERLAP COVERAGE ----
+overlap_summary <- overlap_by_year %>%
+  summarise(min_cover = min(percent_coverage),
+            max_cover = max(percent_coverage),
+            mean_cover = mean(percent_coverage))
+
+# ---- 10. NMDS ----
+nmds_scores <- as.data.frame(scores(nmds))
+stopifnot(nrow(nmds_scores) == nrow(site_species_clean))
+nmds_scores$inside_mpa <- site_species_clean$inside_mpa
+nmds_scores$bioregion  <- site_species_clean$bioregion
+
+# ---- EXPORT ALL ----
+write.csv(all_model_results, "all_model_results.csv", row.names=FALSE)
+write.csv(levene_df, "levene_results.csv", row.names=FALSE)
+write.csv(div_summary_bioregion, "diversity_summary.csv", row.names=FALSE)
+write.csv(perm_results, "permanova_results.csv", row.names=FALSE)
+write.csv(pca_scores, "pca_scores.csv", row.names=FALSE)
+write.csv(pca_loadings, "pca_loadings.csv", row.names=FALSE)
+write.csv(pca_var_df, "pca_variance.csv", row.names=FALSE)
+write.csv(cluster_assignments, "cluster_assignments.csv", row.names=FALSE)
+write.csv(cluster_centers, "cluster_centroids.csv", row.names=FALSE)
+write.csv(baci_summary, "baci_summary.csv", row.names=FALSE)
+write.csv(lagged_results, "lagged_effect_results.csv", row.names=FALSE)
+write.csv(overlap_by_year, "overlap_by_year.csv", row.names=FALSE)
+write.csv(nmds_scores, "nmds_scores.csv", row.names=FALSE)
+write.csv(coverage_all, "coverage_bioregion.csv", row.names=FALSE)
+write.csv(fishery, "fishery.csv", row.names=FALSE)
+```
+
+```{r}
+sg_sub <- sg_eq %>% filter(Seagr_bioregion == region_name)
+  
+  # Crop MPAs to bounding box of region
+  mpa_sub <- st_crop(mpa_eq, st_bbox(sg_sub))
+  
+  # Union *only this subset* to avoid double-counting
+  mpa_sub_union <- st_union(mpa_sub)
+  
+  # Intersections
+  sg_mpa_sub <- st_intersection(sg_sub, mpa_sub_union)
+  
+  # Area calculations
+  sg_sub$area_total <- as.numeric(st_area(sg_sub))
+  sg_mpa_sub$area_overlap <- as.numeric(st_area(sg_mpa_sub))
+  
+  # Coverage summary
+  coverage <- sg_mpa_sub %>%
+    st_drop_geometry() %>%
+    summarise(overlap_area = sum(area_overlap, na.rm=TRUE)) %>%
+    mutate(bioregion = region_name,
+           area_total = sum(sg_sub$area_total, na.rm=TRUE),
+           percent_coverage = 100 * overlap_area / area_total)
+```
+
+```{r}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+# ---- Plot ----
+ggplot() +
+  geom_sf(data = world, fill = "grey90", color = "grey60", size = 0.2) +
+  geom_sf(data = seagrass_sf_proj, aes(color=inside_mpa), size=1) +
+  geom_sf(data = mpa_global_proj, aes(fill = "MPA"), color = NA, alpha = 0.4) +
+  coord_sf(crs = "ESRI:54009") +
+  scale_fill_manual(values = c("Seagrass" = "green3", "MPA" = "steelblue")) +
+  theme_void() +
+  labs(title = "Seagrass & MPA Distribution with World Basemap Overlay")
+```
+
